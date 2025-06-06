@@ -8,6 +8,7 @@
 #include <AccelStepper.h>
 #include <WiFiUdp.h>
 
+
 #define PAN_ENCODER_ADDR  0x36
 #define TILT_ENCODER_ADDR 0x37
 #define ZOOM_ENCODER_ADDR 0x38
@@ -185,6 +186,9 @@ void setup() {
     zoomAngle = readAS5600(ZOOM_ENCODER_ADDR);
   
     if(digitalRead(WIFI_BTN_PIN) == LOW || !connectWiFi()) {
+
+    if(!connectWiFi()) {
+
         startConfigAP();
     }
 
@@ -209,6 +213,7 @@ void loop() {
             udp.endPacket();
         }
     }
+
     panStepper.run();
     tiltStepper.run();
     zoomStepper.run();
