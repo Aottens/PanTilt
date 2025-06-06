@@ -17,10 +17,18 @@ platformio run -e controller  # build controller firmware
 
 Upload with `--target upload` as usual.
 
+
+## Soft limit menu
+When the controller starts it enters a menu to adjust the allowed ranges.
+Move the joystick up or down to select `panMin`, `panMax`, `tiltMin` or
+`tiltMax`. Push the stick left or right to decrease or increase the value.
+After a few seconds with no input the menu closes and the limits are saved.
+
 ### Private WiFi key
 Copy `common/secrets.example.h` to `common/secrets.h` and edit the
 `WIFI_KEY` array with your own 16‑byte key before building. The
 `secrets.h` file is excluded from version control via `.gitignore`.
+
 
 ## License
 This project is licensed under the [MIT License](LICENSE).

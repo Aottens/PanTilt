@@ -1,6 +1,8 @@
 #pragma once
 #include "ptz_proto.h"
 #include <Preferences.h>
+#include <Adafruit_SSD1306.h>
+#include "Joystick.h"
 
 namespace ptz {
 struct Limits {
@@ -13,7 +15,7 @@ struct Limits {
 class SoftLimitMenu {
 public:
   void begin();
-  void edit();
+  void edit(Joystick &joy, Adafruit_SSD1306 &disp);
   Limits limits() const { return limits_; }
 
 private:
