@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <AccelStepper.h>
 
 #define OLED_SDA 21
 #define OLED_SCL 22
@@ -17,6 +18,23 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 WebServer server(80);
 Preferences prefs;
 
+// Stepper driver pins
+#define PAN_STEP_PIN 32
+#define PAN_DIR_PIN 33
+#define PAN_EN_PIN 25
+
+#define TILT_STEP_PIN 26
+#define TILT_DIR_PIN 27
+#define TILT_EN_PIN 14
+
+#define ZOOM_STEP_PIN 12
+#define ZOOM_DIR_PIN 13
+#define ZOOM_EN_PIN 15
+
+AccelStepper panStepper(AccelStepper::DRIVER, PAN_STEP_PIN, PAN_DIR_PIN);
+AccelStepper tiltStepper(AccelStepper::DRIVER, TILT_STEP_PIN, TILT_DIR_PIN);
+AccelStepper zoomStepper(AccelStepper::DRIVER, ZOOM_STEP_PIN, ZOOM_DIR_PIN);
+
 void showStatus(const String &msg) {
     display.clearDisplay();
     display.setCursor(0,0);
@@ -24,6 +42,25 @@ void showStatus(const String &msg) {
     display.setTextColor(SSD1306_WHITE);
     display.println(msg);
     display.display();
+}
+
+void initSteppers() {
+    pinMode(PAN_EN_PIN, OUTPUT);
+    pinMode(TILT_EN_PIN, OUTPUT);
+    pinMode(ZOOM_EN_PIN, OUTPUT);
+
+    digitalWrite(PAN_EN_PIN, LOW);
+    digitalWrite(TILT_EN_PIN, LOW);
+    digitalWrite(ZOOM_EN_PIN, LOW);
+
+    panStepper.setMaxSpeed(2000);
+    panStepper.setAcceleration(1000);
+
+    tiltStepper.setMaxSpeed(2000);
+    tiltStepper.setAcceleration(1000);
+
+    zoomStepper.setMaxSpeed(2000);
+    zoomStepper.setAcceleration(1000);
 }
 
 void saveCredentials(const String &ssid, const String &pass) {
@@ -53,6 +90,22 @@ void handleSave() {
     } else {
         server.send(400, "text/plain", "Missing fields");
     }
+}
+
+void handleMove() {
+    if (server.hasArg("pan")) {
+        long p = server.arg("pan").toInt();
+        panStepper.moveTo(p);
+    }
+    if (server.hasArg("tilt")) {
+        long t = server.arg("tilt").toInt();
+        tiltStepper.moveTo(t);
+    }
+    if (server.hasArg("zoom")) {
+        long z = server.arg("zoom").toInt();
+        zoomStepper.moveTo(z);
+    }
+    server.send(200, "text/plain", "OK");
 }
 
 void startConfigAP() {
@@ -100,6 +153,7 @@ void setup() {
     }
 
     showStatus("Booting...");
+    initSteppers();
 
     if(!connectWiFi()) {
         startConfigAP();
@@ -107,11 +161,15 @@ void setup() {
 
     showStatus("WiFi Connected\nIP: " + WiFi.localIP().toString());
     server.on("/", [](){ server.send(200, "text/plain", "Controller endpoint"); });
+    server.on("/move", HTTP_GET, handleMove);
     server.begin();
 }
 
 void loop() {
     server.handleClient();
-    delay(10);
+    panStepper.run();
+    tiltStepper.run();
+    zoomStepper.run();
+    delay(1);
 }
 
