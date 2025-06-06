@@ -6,6 +6,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <AccelStepper.h>
+#include <WiFiUdp.h>
 
 #define PAN_ENCODER_ADDR  0x36
 #define TILT_ENCODER_ADDR 0x37
@@ -21,6 +22,11 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 WebServer server(80);
 Preferences prefs;
+WiFiUDP udp;
+
+#define DISCOVERY_PORT 4210
+#define WIFI_BTN_PIN 0
+const char *DEVICE_NAME = "PTZ-Receiver";
 
 // Stepper driver pins
 #define PAN_STEP_PIN 32
@@ -165,6 +171,7 @@ bool connectWiFi() {
 void setup() {
     Serial.begin(115200);
     Wire.begin(OLED_SDA, OLED_SCL);
+    pinMode(WIFI_BTN_PIN, INPUT_PULLUP);
 
     if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
         Serial.println("OLED init failed");
@@ -177,7 +184,7 @@ void setup() {
     tiltAngle = readAS5600(TILT_ENCODER_ADDR);
     zoomAngle = readAS5600(ZOOM_ENCODER_ADDR);
   
-    if(!connectWiFi()) {
+    if(digitalRead(WIFI_BTN_PIN) == LOW || !connectWiFi()) {
         startConfigAP();
     }
 
@@ -185,10 +192,23 @@ void setup() {
     server.on("/", [](){ server.send(200, "text/plain", "Controller endpoint"); });
     server.on("/move", HTTP_GET, handleMove);
     server.begin();
+    udp.begin(DISCOVERY_PORT);
 }
 
 void loop() {
     server.handleClient();
+    int p = udp.parsePacket();
+    if (p) {
+        String msg;
+        while (udp.available()) {
+            msg += (char)udp.read();
+        }
+        if (msg == "DISCOVER_PTZ") {
+            udp.beginPacket(udp.remoteIP(), udp.remotePort());
+            udp.write((const uint8_t*)DEVICE_NAME, strlen(DEVICE_NAME));
+            udp.endPacket();
+        }
+    }
     panStepper.run();
     tiltStepper.run();
     zoomStepper.run();
