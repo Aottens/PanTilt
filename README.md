@@ -9,6 +9,7 @@ for use with [PlatformIO](https://platformio.org/) and the Arduino framework.
 - Basic HTTP endpoint to control pan, tilt and zoom motors.
 - Position feedback using three AS5600 magnetic encoders.
 
+
 ## Building
 Install PlatformIO and run the build from this directory:
 

@@ -176,7 +176,7 @@ void setup() {
     panAngle = readAS5600(PAN_ENCODER_ADDR);
     tiltAngle = readAS5600(TILT_ENCODER_ADDR);
     zoomAngle = readAS5600(ZOOM_ENCODER_ADDR);
-
+  
     if(!connectWiFi()) {
         startConfigAP();
     }
