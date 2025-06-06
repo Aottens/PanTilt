@@ -6,7 +6,7 @@ for use with [PlatformIO](https://platformio.org/) and the Arduino framework.
 ## Features
 - Wi-Fi configuration via temporary access point and simple web page.
 - Connection status shown on an OLED display (SSD1306).
-- Placeholder HTTP server for future controller commands.
+- Basic HTTP endpoint to control pan, tilt and zoom motors.
 
 ## Building
 Install PlatformIO and run the build from this directory:
