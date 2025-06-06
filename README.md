@@ -24,3 +24,8 @@ platformio run --target upload
 ```
 
 The configuration for PlatformIO is stored in `platformio.ini`.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
