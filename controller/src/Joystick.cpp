@@ -21,4 +21,7 @@ int16_t Joystick::velocity() {
   return vel;
 }
 
+int16_t Joystick::x() { return analogRead(xp_) - 2048; }
+int16_t Joystick::y() { return analogRead(yp_) - 2048; }
+
 } // namespace ptz
