@@ -26,6 +26,7 @@ void setup() {
   joy.begin(34, 35);
   ui.begin();
   menu.begin();
+  menu.edit(joy, ui.display());
   wifiLink.beginAP(onRecv);
 }
 
