@@ -17,5 +17,14 @@ platformio run -e controller  # build controller firmware
 
 Upload with `--target upload` as usual.
 
+## Testing
+Run the unit tests using PlatformIO's native environment:
+
+```bash
+platformio test -e native
+```
+
+This will build and execute the tests on your host machine using Google Test.
+
 ## License
 This project is licensed under the [MIT License](LICENSE).
