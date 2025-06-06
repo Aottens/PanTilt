@@ -1,5 +1,9 @@
 #include "wifi_link.h"
-#include "secrets.h"
+#if __has_include("secrets.h")
+#  include "secrets.h"
+#else
+#  include "secrets.example.h"
+#endif
 #include <WiFi.h>
 
 namespace ptz {
@@ -11,12 +15,7 @@ static void onSent(const uint8_t *, esp_now_send_status_t) {}
 bool WiFiLink::beginSTA(const uint8_t peer[6], RecvCallback cb) {
   WiFi.mode(WIFI_STA);
   WiFi.disconnect(false, true);
-  if (!WiFi.begin()) {
-    return false;
-  }
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(100);
-  }
+  // ESP-NOW does not require connection to an access point
   if (esp_now_init() != ESP_OK)
     return false;
   esp_now_register_send_cb(onSent);
