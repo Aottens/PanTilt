@@ -3,7 +3,7 @@
 Firmware for an ESP32 based pan/tilt head and its remote controller.
 
 ## Implemented MUST features
-- ESP-NOW communication with AES encryption
+- ESP-NOW communication with AES encryption (no Wi-Fi association required)
 - Common PTZ protocol with compile time CRC
 - Motion controller with encoder watchdog and soft limits
 - Joystick based controller UI on OLED display
