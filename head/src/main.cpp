@@ -1,14 +1,17 @@
 #include "MotionController.h"
 #include "ptz_proto.h"
 #include "wifi_link.h"
+#include "secrets.h"
 #include <Arduino.h>
+#include <Preferences.h>
 #include <Wire.h>
 
 using namespace ptz;
 
 static WiFiLink wifiLink;
 static MotionController motion;
-static uint8_t controllerMac[6] = {0, 0, 0, 0, 0, 0};
+static Preferences prefs;
+static uint8_t controllerMac[6];
 
 static void onRecv(const uint8_t *data, size_t len) {
   if (len == sizeof(HeadCmd)) {
@@ -19,6 +22,15 @@ static void onRecv(const uint8_t *data, size_t len) {
 
 void setup() {
   Serial.begin(115200);
+  prefs.begin("wifi", true);
+  if (prefs.getBytes("controller", controllerMac, 6) != 6) {
+    memcpy(controllerMac, CONTROLLER_MAC, 6);
+  }
+  prefs.end();
+  static const uint8_t unset[6] = {0, 0, 0, 0, 0, 0};
+  if (memcmp(controllerMac, unset, 6) == 0) {
+    Serial.println("WARNING: controller MAC address not configured");
+  }
   Wire.begin();
   motion.begin();
   wifiLink.beginSTA(controllerMac, onRecv);

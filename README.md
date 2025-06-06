@@ -17,6 +17,7 @@ platformio run -e controller  # build controller firmware
 
 Upload with `--target upload` as usual.
 
+
 ## Testing
 Run the unit tests using PlatformIO's native environment:
 
@@ -36,6 +37,26 @@ After a few seconds with no input the menu closes and the limits are saved.
 Copy `common/secrets.example.h` to `common/secrets.h` and edit the
 `WIFI_KEY` array with your own 16‑byte key before building. The
 `secrets.h` file is excluded from version control via `.gitignore`.
+
+## Configuring MAC addresses
+Each device needs to know the MAC address of its peer. You can read the
+hardware MAC of an ESP32 by uploading the following sketch and checking the
+serial output:
+
+```cpp
+#include <WiFi.h>
+void setup() {
+  Serial.begin(115200);
+  WiFi.mode(WIFI_STA);
+  Serial.println(WiFi.macAddress());
+}
+void loop() {}
+```
+
+Copy the printed address of each board into `common/secrets.h` (variables
+`CONTROLLER_MAC` and `HEAD_MAC`) or store them in Preferences using the keys
+`controller` and `head` under the `wifi` namespace before flashing the final
+firmware.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
