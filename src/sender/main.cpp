@@ -167,10 +167,6 @@ void sendControl() {
     int pan = map((int)filtX, 0, 4095, -1000, 1000);
     int tilt = map((int)filtY, 0, 4095, -1000, 1000);
 
-    int x = analogRead(JOY_X_PIN);
-    int y = analogRead(JOY_Y_PIN);
-    int pan = map(x, 0, 4095, -1000, 1000);
-    int tilt = map(y, 0, 4095, -1000, 1000);
     String url = String("http://") + selectedReceiver.toString() + "/move?pan=" + pan + "&tilt=" + tilt;
     HTTPClient http;
     http.begin(url);
