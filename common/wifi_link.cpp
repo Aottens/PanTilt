@@ -1,5 +1,9 @@
 #include "wifi_link.h"
-#include "secrets.h"
+#if __has_include("secrets.h")
+#  include "secrets.h"
+#else
+#  include "secrets.example.h"
+#endif
 #include <WiFi.h>
 
 namespace ptz {
