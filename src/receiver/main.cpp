@@ -185,10 +185,7 @@ void setup() {
     tiltAngle = readAS5600(TILT_ENCODER_ADDR);
     zoomAngle = readAS5600(ZOOM_ENCODER_ADDR);
   
-    if(digitalRead(WIFI_BTN_PIN) == LOW || !connectWiFi()) {
-
-    if(!connectWiFi()) {
-
+    if (digitalRead(WIFI_BTN_PIN) == LOW || !connectWiFi()) {
         startConfigAP();
     }
 
