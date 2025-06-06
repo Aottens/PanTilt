@@ -7,6 +7,10 @@
 #include <Adafruit_SSD1306.h>
 #include <AccelStepper.h>
 
+#define PAN_ENCODER_ADDR  0x36
+#define TILT_ENCODER_ADDR 0x37
+#define ZOOM_ENCODER_ADDR 0x38
+
 #define OLED_SDA 21
 #define OLED_SCL 22
 
@@ -34,6 +38,20 @@ Preferences prefs;
 AccelStepper panStepper(AccelStepper::DRIVER, PAN_STEP_PIN, PAN_DIR_PIN);
 AccelStepper tiltStepper(AccelStepper::DRIVER, TILT_STEP_PIN, TILT_DIR_PIN);
 AccelStepper zoomStepper(AccelStepper::DRIVER, ZOOM_STEP_PIN, ZOOM_DIR_PIN);
+
+uint16_t panAngle = 0;
+uint16_t tiltAngle = 0;
+uint16_t zoomAngle = 0;
+
+uint16_t readAS5600(uint8_t addr) {
+    Wire.beginTransmission(addr);
+    Wire.write(0x0C); // RAW ANGLE MSB
+    if (Wire.endTransmission(false) != 0) return 0;
+    Wire.requestFrom(addr, (uint8_t)2);
+    if (Wire.available() < 2) return 0;
+    uint16_t value = (Wire.read() << 8) | Wire.read();
+    return value;
+}
 
 void showStatus(const String &msg) {
     display.clearDisplay();
@@ -155,6 +173,10 @@ void setup() {
     showStatus("Booting...");
     initSteppers();
 
+    panAngle = readAS5600(PAN_ENCODER_ADDR);
+    tiltAngle = readAS5600(TILT_ENCODER_ADDR);
+    zoomAngle = readAS5600(ZOOM_ENCODER_ADDR);
+  
     if(!connectWiFi()) {
         startConfigAP();
     }
@@ -170,6 +192,10 @@ void loop() {
     panStepper.run();
     tiltStepper.run();
     zoomStepper.run();
+
+    panAngle = readAS5600(PAN_ENCODER_ADDR);
+    tiltAngle = readAS5600(TILT_ENCODER_ADDR);
+    zoomAngle = readAS5600(ZOOM_ENCODER_ADDR);
     delay(1);
 }
 

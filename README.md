@@ -7,6 +7,8 @@ for use with [PlatformIO](https://platformio.org/) and the Arduino framework.
 - Wi-Fi configuration via temporary access point and simple web page.
 - Connection status shown on an OLED display (SSD1306).
 - Basic HTTP endpoint to control pan, tilt and zoom motors.
+- Position feedback using three AS5600 magnetic encoders.
+
 
 ## Building
 Install PlatformIO and run the build from this directory:
