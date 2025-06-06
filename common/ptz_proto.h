@@ -47,6 +47,8 @@ template <typename T> constexpr uint16_t crc16_struct() {
   union U {
     T obj;
     uint8_t bytes[sizeof(T)];
+    constexpr U() : bytes{} {}  // keep 'bytes' active for constant evaluation
+  } u;
   } u{};
   return crc16_calc(u.bytes);
 }
