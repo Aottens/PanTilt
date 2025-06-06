@@ -156,6 +156,17 @@ void showReceivers() {
 
 void sendControl() {
     if (selectedReceiver == IPAddress()) return;
+    static float filtX = analogRead(JOY_X_PIN);
+    static float filtY = analogRead(JOY_Y_PIN);
+    float rawX = analogRead(JOY_X_PIN);
+    float rawY = analogRead(JOY_Y_PIN);
+    // simple exponential moving average to smooth joystick noise
+    const float alpha = 0.3f;
+    filtX = filtX * (1.0f - alpha) + rawX * alpha;
+    filtY = filtY * (1.0f - alpha) + rawY * alpha;
+    int pan = map((int)filtX, 0, 4095, -1000, 1000);
+    int tilt = map((int)filtY, 0, 4095, -1000, 1000);
+
     int x = analogRead(JOY_X_PIN);
     int y = analogRead(JOY_Y_PIN);
     int pan = map(x, 0, 4095, -1000, 1000);

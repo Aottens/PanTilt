@@ -11,16 +11,19 @@ for use with [PlatformIO](https://platformio.org/) and the Arduino framework.
 
 
 ## Building
-Install PlatformIO and run the build from this directory:
+Install PlatformIO and run the build from this directory.
+There are separate environments for the receiver and sender:
 
 ```bash
-platformio run
+platformio run -e receiver  # build receiver firmware
+platformio run -e sender    # build sender firmware
 ```
 
 Upload the firmware using:
 
 ```bash
-platformio run --target upload
+platformio run -e receiver --target upload
+platformio run -e sender --target upload
 ```
 
 The configuration for PlatformIO is stored in `platformio.ini`.
