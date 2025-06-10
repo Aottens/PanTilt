@@ -50,6 +50,7 @@ void loop() {
     wifiLink.send(headMac, &cmd, sizeof(cmd));
     lastSend = millis();
   }
-  ui.update(lastStatus, true);
+  bool zoom = lastStatus.flags & FLAG_ZOOM_PRESENT;
+  ui.update(lastStatus, zoom);
   delay(10);
 }

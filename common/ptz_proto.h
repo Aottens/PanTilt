@@ -27,6 +27,7 @@ constexpr int16_t TILT_MIN = -120;
 constexpr int16_t TILT_MAX = 120;
 
 constexpr uint8_t FLAG_ENCODER_ERR = 0x01;
+constexpr uint8_t FLAG_ZOOM_PRESENT = 0x02;
 
 constexpr uint16_t crc16_byte(uint16_t crc, uint8_t data) {
   crc ^= data;
