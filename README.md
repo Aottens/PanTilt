@@ -7,6 +7,7 @@ Firmware for an ESP32 based pan/tilt head and its remote controller.
 - Common PTZ protocol with compile time CRC
 - Motion controller with encoder watchdog and soft limits
 - Joystick based controller UI on OLED display
+- Automatic detection of zoom lens with indicator on the controller display
 
 ## Building
 Install PlatformIO and run:

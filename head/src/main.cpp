@@ -1,5 +1,6 @@
 #include "MotionController.h"
 #include "ptz_proto.h"
+#include "ZoomDetect.h"
 #include "wifi_link.h"
 #include "secrets.h"
 #include <Arduino.h>
@@ -10,6 +11,8 @@ using namespace ptz;
 
 static WiFiLink wifiLink;
 static MotionController motion;
+static ZoomDetect zoomDet;
+static bool zoomPresent = false;
 static Preferences prefs;
 static uint8_t controllerMac[6];
 
@@ -32,6 +35,7 @@ void setup() {
     Serial.println("WARNING: controller MAC address not configured");
   }
   Wire.begin();
+  zoomPresent = zoomDet.zoomPresent();
   motion.begin();
   wifiLink.beginSTA(controllerMac, onRecv);
 }
@@ -40,7 +44,10 @@ unsigned long lastStatus = 0;
 void loop() {
   motion.task();
   if (millis() - lastStatus >= 10) {
-    HeadStatus st{motion.panDeg(), motion.tiltDeg(), 0, motion.flags()};
+    uint8_t flags = motion.flags();
+    if (zoomPresent)
+      flags |= FLAG_ZOOM_PRESENT;
+    HeadStatus st{motion.panDeg(), motion.tiltDeg(), 0, flags};
     wifiLink.send(controllerMac, &st, sizeof(st));
     lastStatus = millis();
   }
