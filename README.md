@@ -35,8 +35,10 @@ After a few seconds with no input the menu closes and the limits are saved.
 
 ### Private WiFi key
 Copy `common/secrets.example.h` to `common/secrets.h` and edit the
-`WIFI_KEY` array with your own 16‑byte key before building. The
-`secrets.h` file is excluded from version control via `.gitignore`.
+`WIFI_KEY` array with your own 16‑byte key before building. The file also
+contains placeholders for `CONTROLLER_MAC` and `HEAD_MAC` which you may fill
+with the MAC addresses of your boards. The `secrets.h` file is excluded from
+version control via `.gitignore`.
 
 ## Configuring MAC addresses
 Each device needs to know the MAC address of its peer. You can read the
